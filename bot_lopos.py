@@ -26,23 +26,29 @@ class BotLPS(commands.Bot):
             print(e)
 
     async def on_member_join(self, membre):
-        await self.get_channel(1336174883574513705).send(f"{membre.mention} vient d'arriver parmis nous")
+        await self.get_channel(1336174883574513705).send(f"{membre.mention} vient d'arriver parmi nous")
 
     async def on_member_remove(self, membre):
-        await self.get_channel(1336303100700393473).send(f"{membre.mention} nous a abondonné pour d'autre")
+        await self.get_channel(1336303100700393473).send(f"{membre.mention} nous a abandonné pour d'autre")
 
     async def on_message(self, message: Message, /) -> None:
-        if message.author.bot: return
+        if message.author.bot:
+            return
         if message.content.lower() in ["yo", "bonjours", "salut"]:
-            await message.author.send("Salutation camarade")
+            await message.author.send("NE ME DERANGE PLUS !!!!")
+            await message.channel.send("Salutation camarade")
 
     def test(self):
         @self.tree.command(name="test", description="Commende de test")
         async def test(interaction: discord.Interaction):
             await interaction.response.send_message("La commande de Test fonctionne bien !!!")
 
+        @self.tree.command(name="latence", description="voir les performances du bot")
+        async def latency(msg: discord.Interaction):
+            await msg.channel.send(f"ms bot: {self.latency * 1000}")
+
     def emojis(self):
-        # utiliser les émojie personnaliser
+        # utiliser les émojis personnalisés
         @self.tree.command(name="emoji", description="émoji propre au bot")
         async def emoji(interaction: discord.Interaction):
             # Vérifiez si l'interaction a lieu dans un serveur
@@ -69,7 +75,7 @@ class BotLPS(commands.Bot):
             else:
                 await interaction.response.send_message("Émoji non trouvé. Assurez-vous d'utiliser le bon nom.")
 
-    def evenenent_clasique(self):
+    def evenenent_classique(self):
         pass
 
     def moderation(self):
@@ -77,23 +83,26 @@ class BotLPS(commands.Bot):
         async def suppr(interaction: discord.Interaction, nombre: int):
             try:
                 messages = []
-                async for msg in interaction.channel.history(limit=nombre+1):
+                async for msg in interaction.channel.history(limit=nombre + 1):
                     messages.append(msg)
                 await interaction.channel.delete_messages(messages)
-                await interaction.response.send_message(f"{nombre} messages supprimés avec succès.")
+                messages.clear()
             except discord.Forbidden:
-                await interaction.response.send_message("Je n'ai pas la permission de supprimer des messages.")
-            except discord.HTTPException as e:
-                await interaction.response.send_message(f"Erreur lors de la suppression des messages : {e.text}")
+                pass
 
-    def charger_bot(self):
-        self.test()
-        self.emojis()
-        self.evenenent_clasique()
-        self.moderation()
+    def charger_bot(self, moderation: bool = False, stk: bool = False, experimental: bool = False, autre: bool = False):
+        if moderation:
+            self.evenenent_classique()
+            self.moderation()
+        if stk:
+            pass
+        if experimental:
+            self.test()
+        if autre:
+            self.emojis()
         super().run(token)
 
 
 if __name__ == "__main__":
     bot = BotLPS()
-    bot.charger_bot()
+    bot.charger_bot(True, False, True, False)
